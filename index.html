@@ -21,6 +21,7 @@
   </form>
   <p id="message"></p>
 
+  <!-- 🔴 Script: Paste JS code inside this <script> tag, at the end of body -->
   <script>
     const form = document.getElementById("emailForm");
     const message = document.getElementById("message");
@@ -34,8 +35,8 @@
         return;
       }
 
-      const apiKey = "vk_prod_866c21581ca3741f989ace2c"; // Your ValidKit API key
-      const url = `https://api.validkit.com/v1/verify?email=${email}&apikey=${apiKey}`;
+      // 🔴 Updated: Call serverless function instead of direct ValidKit API
+      const url = `/api/verify?email=${encodeURIComponent(email)}`;
 
       try {
         message.textContent = "Checking email...";
@@ -45,9 +46,8 @@
 
         if (data.status === "valid") {
           message.textContent = "Email valid! Redirecting...";
-          // OGAds link
           setTimeout(() => {
-            window.location.href = "https://lockverify.org/cl/i/1x51rk"; 
+            window.location.href = "https://lockverify.org/cl/i/1x51rk";
           }, 1000);
         } else {
           message.textContent = "Invalid or disposable email. Please try again.";
@@ -59,6 +59,7 @@
       }
     });
   </script>
+  <!-- 🔴 Script ends -->
 
 </body>
 </html>
