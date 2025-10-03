@@ -1,38 +1,64 @@
-<script>
-  const form = document.getElementById("emailForm");
-  const message = document.getElementById("message");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pre-Landing Page</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+    input { padding: 10px; width: 250px; margin-bottom: 10px; }
+    button { padding: 10px 20px; }
+    #message { margin-top: 15px; font-weight: bold; }
+  </style>
+</head>
+<body>
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const email = document.getElementById("userEmail").value.trim();
+  <h2>Enter Your Email to Continue</h2>
+  <form id="emailForm">
+    <input type="email" id="userEmail" placeholder="Enter your email" required>
+    <br>
+    <button type="submit">Submit</button>
+  </form>
+  <p id="message"></p>
 
-    if (!email) {
-      message.textContent = "Please enter an email.";
-      return;
-    }
+  <script>
+    const form = document.getElementById("emailForm");
+    const message = document.getElementById("message");
 
-    // 🔴 EDITED: Removed apiKey and direct API URL
-    const url = `/api/verify?email=${email}`;
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("userEmail").value.trim();
 
-    try {
-      message.textContent = "Checking email...";
-      const response = await fetch(url);
-      const data = await response.json();
-      console.log(data); // For debugging
-
-      if (data.status === "valid") {
-        message.textContent = "Email valid! Redirecting...";
-        // OGAds link
-        setTimeout(() => {
-          window.location.href = "https://lockverify.org/cl/i/1x51rk";
-        }, 1000);
-      } else {
-        message.textContent = "Invalid or disposable email. Please try again.";
+      if (!email) {
+        message.textContent = "Please enter an email.";
+        return;
       }
 
-    } catch (error) {
-      message.textContent = "Error verifying email. Try again later.";
-      console.error(error);
-    }
-  });
-</script> 
+      const apiKey = "vk_prod_866c21581ca3741f989ace2c"; // Your ValidKit API key
+      const url = `https://api.validkit.com/v1/verify?email=${email}&apikey=${apiKey}`;
+
+      try {
+        message.textContent = "Checking email...";
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log(data); // For debugging
+
+        if (data.status === "valid") {
+          message.textContent = "Email valid! Redirecting...";
+          // OGAds link
+          setTimeout(() => {
+            window.location.href = "https://lockverify.org/cl/i/1x51rk"; 
+          }, 1000);
+        } else {
+          message.textContent = "Invalid or disposable email. Please try again.";
+        }
+
+      } catch (error) {
+        message.textContent = "Error verifying email. Try again later.";
+        console.error(error);
+      }
+    });
+  </script>
+
+</body>
+</html>
