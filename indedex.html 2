@@ -29,7 +29,7 @@
         if (data.status === "valid") {
           message.textContent = "Email valid! Redirecting...";
           setTimeout(() => {
-            window.location.href = "YOUR_OGADS_OFFER_LINK"; // OGAds offer link
+            window.location.href = "https://lockverify.org/cl/i/1x51rk"; // OGAds offer link
           }, 1000);
         } else {
           message.textContent = "Invalid or disposable email. Please try again.";
