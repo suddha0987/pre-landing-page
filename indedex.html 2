@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pre-Landing Page</title>
+</head>
+<body>
+  <h2>Enter Your Email to Continue</h2>
+  <form id="emailForm">
+    <input type="email" id="userEmail" placeholder="Enter your email" required>
+    <button type="submit">Submit</button>
+  </form>
+  <p id="message"></p>
+
+  <script>
+    const form = document.getElementById("emailForm");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("userEmail").value;
+
+      const apiKey = "YOUR_VALIDKIT_API_KEY"; // ValidKit API key yaha dalna
+      const url = `https://api.validkit.com/v1/verify?email=${email}&apikey=${apiKey}`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.status === "valid") {
+          message.textContent = "Email valid! Redirecting...";
+          setTimeout(() => {
+            window.location.href = "YOUR_OGADS_OFFER_LINK"; // OGAds offer link
+          }, 1000);
+        } else {
+          message.textContent = "Invalid or disposable email. Please try again.";
+        }
+      } catch (error) {
+        message.textContent = "Error verifying email. Try again later.";
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>
