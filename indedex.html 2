@@ -19,7 +19,7 @@
       e.preventDefault();
       const email = document.getElementById("userEmail").value;
 
-      const apiKey = "YOUR_VALIDKIT_API_KEY"; // ValidKit API key yaha dalna
+      const apiKey = "vk_prod_866c21581ca3741f989ace2c"; // ValidKit API key yaha dalna
       const url = `https://api.validkit.com/v1/verify?email=${email}&apikey=${apiKey}`;
 
       try {
