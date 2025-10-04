@@ -1,46 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Email Verification</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OGAds Email Check</title>
+  <style>
+    body { font-family: Arial; text-align:center; margin-top:50px; }
+    input, button { padding:10px; font-size:16px; margin:5px; }
+    .error { color:red; }
+  </style>
 </head>
 <body>
-<h2>Email Verification</h2>
-<input type="email" id="email" placeholder="Enter your email" required />
-<button id="submit">Submit</button>
-<p id="msg" style="color:red;"></p>
+  <h2>Enter Your Email to Proceed</h2>
+  <input type="email" id="email" placeholder="example@gmail.com" required>
+  <button onclick="submitEmail()">Submit</button>
+  <p class="error" id="error"></p>
 
-<script>
-const submitBtn = document.getElementById('submit');
-const emailInput = document.getElementById('email');
-const msg = document.getElementById('msg');
+  <script>
+    async function submitEmail() {
+      const email = document.getElementById('email').value.trim();
+      const errorEl = document.getElementById('error');
+      errorEl.textContent = '';
 
-submitBtn.addEventListener('click', async () => {
-    const email = emailInput.value.trim();
-    if(!email) {
-        msg.textContent = 'Email is required';
-        return;
-    }
-    msg.textContent = 'Verifying...';
+      if (!email) { errorEl.textContent = 'Please enter email'; return; }
 
-    try {
+      try {
         const res = await fetch('/api/verify-email', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email })
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
         });
         const data = await res.json();
-        if(data.ok){
-            window.location.href = data.redirect;
+
+        if (data.status === 'valid') {
+          window.location.href = 'https://lockverify.org/cl/i/1x51rk'; // OGAds link
         } else {
-            msg.textContent = data.error || 'Invalid email';
+          errorEl.textContent = 'Invalid or disposable email. Please use real email.';
         }
-    } catch(e){
-        msg.textContent = 'Something went wrong';
-        console.error(e);
+      } catch (err) {
+        console.error(err);
+        errorEl.textContent = 'Error verifying email. Try again later.';
+      }
     }
-});
-</script>
+  </script>
 </body>
 </html>
