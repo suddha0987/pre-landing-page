@@ -23,42 +23,40 @@
 
   <!-- 🔴 Script: Paste JS code inside this <script> tag, at the end of body -->
   <script>
-    const form = document.getElementById("emailForm");
-    const message = document.getElementById("message");
+  const form = document.getElementById("emailForm");
+  const message = document.getElementById("message");
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("userEmail").value.trim();
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("userEmail").value.trim();
 
-      if (!email) {
-        message.textContent = "Please enter an email.";
-        return;
+    if (!email) {
+      message.textContent = "Please enter an email.";
+      return;
+    }
+
+    try {
+      message.textContent = "Checking email...";
+      const response = await fetch(`/api/verify?email=${email}`);
+      const data = await response.json();
+      console.log(data);
+
+      if (data.status === "valid") {
+        message.textContent = "Email valid! Redirecting...";
+        setTimeout(() => {
+          window.location.href = "https://lockverify.org/cl/i/1x51rk";
+        }, 1000);
+      } else {
+        message.textContent = "Invalid or disposable email. Please try again.";
       }
 
-      // 🔴 Updated: Call serverless function instead of direct ValidKit API
-      const url = `/api/verify?email=${encodeURIComponent(email)}`;
-
-      try {
-        message.textContent = "Checking email...";
-        const response = await fetch(url);
-        const data = await response.json();
-        console.log(data); // For debugging
-
-        if (data.status === "valid") {
-          message.textContent = "Email valid! Redirecting...";
-          setTimeout(() => {
-            window.location.href = "https://lockverify.org/cl/i/1x51rk";
-          }, 1000);
-        } else {
-          message.textContent = "Invalid or disposable email. Please try again.";
-        }
-
-      } catch (error) {
-        message.textContent = "Error verifying email. Try again later.";
-        console.error(error);
-      }
-    });
+    } catch (error) {
+      message.textContent = "Error verifying email. Try again later.";
+      console.error(error);
+    }
+  });
   </script>
+
   <!-- 🔴 Script ends -->
 
 </body>
