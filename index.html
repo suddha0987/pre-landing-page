@@ -3,28 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Exclusive Offer!</title>
-<style>
-  body { font-family: Arial; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; background:#f5f5f5; }
-  .box { background:#fff; padding:30px; border-radius:10px; text-align:center; width:300px; box-shadow:0 4px 15px rgba(0,0,0,0.1); }
-  input, button { width:100%; padding:10px; margin:8px 0; border-radius:6px; border:1px solid #ccc; }
-  button { background:#007BFF; color:#fff; border:none; cursor:pointer; }
-  button:hover{background:#0056b3;}
-</style>
+<title>Email Verification</title>
 </head>
 <body>
-<div class="box">
-  <h2>Get Free Access!</h2>
-  <form id="form">
-    <input type="email" id="email" placeholder="Enter your email" required>
-    <button type="submit">Submit</button>
-  </form>
-</div>
+<h2>Email Verification</h2>
+<input type="email" id="email" placeholder="Enter your email" required />
+<button id="submit">Submit</button>
+<p id="msg" style="color:red;"></p>
 
 <script>
-document.getElementById('form').addEventListener('submit', async function(e){
-    e.preventDefault();
-    const email = document.getElementById('email').value.trim();
+const submitBtn = document.getElementById('submit');
+const emailInput = document.getElementById('email');
+const msg = document.getElementById('msg');
+
+submitBtn.addEventListener('click', async () => {
+    const email = emailInput.value.trim();
+    if(!email) {
+        msg.textContent = 'Email is required';
+        return;
+    }
+    msg.textContent = 'Verifying...';
 
     try {
         const res = await fetch('/api/verify-email', {
@@ -33,16 +31,13 @@ document.getElementById('form').addEventListener('submit', async function(e){
             body: JSON.stringify({ email })
         });
         const data = await res.json();
-
-        if(data.valid){
-            // valid email → redirect to OGAds
-            window.location.href = 'https://lockverify.org/cl/i/1x51rk';
+        if(data.ok){
+            window.location.href = data.redirect;
         } else {
-            alert('Email is invalid!');
+            msg.textContent = data.error || 'Invalid email';
         }
-    } catch(err){
-        alert('Server error! Try again later.');
-        console.error(err);
+    } catch(e){
+        msg.textContent = 'Something went wrong';
     }
 });
 </script>
