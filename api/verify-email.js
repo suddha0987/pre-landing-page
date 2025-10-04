@@ -7,21 +7,28 @@ export default async function handler(req, res) {
     if(!email) return res.status(400).json({ok:false, error:'Email required'});
 
     try {
-        // ValidKit API call
-        const apiKey = process.env.VALIDKIT_API_KEY; // set in Vercel env
-        const vkRes = await fetch(`https://api.validkit.com/v1/verify?email=${encodeURIComponent(email)}`, {
-            headers: { 'Authorization': `Bearer ${apiKey}` }
+        const apiKey = process.env.VALIDKIT_API_KEY; // Vercel environment variable
+        // POST request to ValidKit API
+        const vkRes = await fetch('https://api.validkit.com/v1/verify', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email })
         });
         const vkData = await vkRes.json();
 
-        // Check if email is valid
-        if(vkData.status === 'valid'){
-            return res.json({ok:true, redirect: 'https://lockverify.org/cl/i/1x51rk'});
+        console.log('ValidKit Response:', vkData); // Debug
+
+        // Check if email is deliverable
+        if(vkData.status === 'success' && vkData.result === 'deliverable') {
+            return res.json({ok:true, redirect:'https://lockverify.org/cl/i/1x51rk'});
         } else {
             return res.json({ok:false, error:'Invalid email'});
         }
     } catch(err){
-        console.error(err);
+        console.error('Server Error:', err);
         return res.status(500).json({ok:false, error:'Server error'});
     }
 }
