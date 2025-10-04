@@ -22,16 +22,28 @@
 </div>
 
 <script>
-document.getElementById('form').addEventListener('submit', function(e){
+document.getElementById('form').addEventListener('submit', async function(e){
     e.preventDefault();
     const email = document.getElementById('email').value;
-    const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // basic email format check
 
-    if(pattern.test(email)){
-        // valid email format → redirect to OGAds
-        window.location.href = 'https://lockverify.org/cl/i/1x51rk';
-    } else {
-        alert('Please enter a valid email!');
+    try {
+        // Call Vercel serverless function for email verification
+        const res = await fetch('/api/verify-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+
+        if(data.valid){
+            // valid email → redirect to OGAds
+            window.location.href = 'https://lockverify.org/cl/i/1x51rk';
+        } else {
+            alert('Email is invalid!');
+        }
+    } catch(err){
+        alert('Server error! Try again later.');
+        console.error(err);
     }
 });
 </script>
