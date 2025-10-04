@@ -7,11 +7,16 @@ export default async function handler(req, res) {
     const { email } = req.body || {};
     if (!email) return res.status(400).json({ valid: false, message: 'No email provided' });
 
-    // Simple regex email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const isValid = emailRegex.test(email);
+    const API_KEY = process.env.VALIDKIT_API_KEY;
+    if (!API_KEY) return res.status(500).json({ valid: false, message: 'Missing API key' });
 
-    return res.status(200).json({ valid: isValid });
+    const response = await fetch(`https://api.validkit.com/v1/verify?email=${encodeURIComponent(email)}`, {
+      headers: { 'Authorization': `Bearer ${API_KEY}` }
+    });
+
+    const data = await response.json();
+    return res.status(200).json({ valid: !!data.is_valid });
+
   } catch (err) {
     console.error('verify-email error:', err);
     return res.status(500).json({ valid: false, message: 'Server error' });
