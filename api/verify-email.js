@@ -1,32 +1,106 @@
-import fetch from 'node-fetch';
-
 export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  // CORS headers - cross-origin requests ke liye
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
+  // Preflight request handle karo
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  // Sirf POST method allow hai
+  if (req.method !== 'POST') {
+    return res.status(405).json({ 
+      valid: false,
+      message: 'Method not allowed' 
+    });
+  }
+
+  // Email body se lo
   const { email } = req.body;
-  if (!email) return res.status(400).json({ error: 'Email is required' });
+
+  // Email check karo
+  if (!email) {
+    return res.status(400).json({
+      valid: false,
+      message: 'Email is required'
+    });
+  }
 
   try {
-    const vkKey = process.env.VALIDKIT_KEY; // Set in Vercel env vars
-    const response = await fetch(`https://api.validkit.com/v1/verify`, {
-      method: 'POST',
+    // Environment variable se API key lo
+    const apiKey = process.env.VALIDKIT_KEY;
+
+    // API key check karo
+    if (!apiKey) {
+      console.error('VALIDKIT_KEY environment variable not found');
+      return res.status(500).json({
+        valid: false,
+        message: 'Server configuration error'
+      });
+    }
+
+    // Validkit API call
+    const validkitUrl = `https://api.validkit.io/v1/verify?email=${encodeURIComponent(email)}`;
+    
+    const response = await fetch(validkitUrl, {
+      method: 'GET',
       headers: {
-        'Authorization': `Bearer ${vkKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email })
+        'X-Api-Key': apiKey
+      }
     });
 
-    const data = await response.json();
-
-    // VK returns status: "valid", "disposable", "invalid", etc.
-    if (data.status === 'valid') {
-      return res.status(200).json({ status: 'valid' });
-    } else {
-      return res.status(200).json({ status: 'invalid' });
+    // Response check karo
+    if (!response.ok) {
+      console.error('Validkit API error:', response.status, response.statusText);
+      return res.status(200).json({
+        valid: false,
+        message: 'Email verification service error'
+      });
     }
-  } catch (err) {
-    console.error('ValidKit API error:', err);
-    return res.status(500).json({ status: 'error', message: 'Failed to verify email' });
+
+    // Response data parse karo
+    const data = await response.json();
+    console.log('Validkit API response:', JSON.stringify(data));
+
+    // Check 1: Disposable email hai?
+    if (data.disposable === true) {
+      return res.status(200).json({
+        valid: false,
+        message: 'Disposable/temporary emails are not allowed'
+      });
+    }
+
+    // Check 2: Email valid hai?
+    if (data.valid === false) {
+      return res.status(200).json({
+        valid: false,
+        message: 'Invalid email address'
+      });
+    }
+
+    // Check 3: Risk score high hai?
+    if (data.risk_score && data.risk_score > 70) {
+      return res.status(200).json({
+        valid: false,
+        message: 'High-risk email detected'
+      });
+    }
+
+    // Sab checks pass - email valid hai
+    return res.status(200).json({
+      valid: true,
+      message: 'Email verified successfully'
+    });
+
+  } catch (error) {
+    // Error handling
+    console.error('Email verification error:', error);
+    return res.status(500).json({
+      valid: false,
+      message: 'Failed to verify email. Please try again.'
+    });
   }
 }
