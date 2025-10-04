@@ -38,6 +38,7 @@ submitBtn.addEventListener('click', async () => {
         }
     } catch(e){
         msg.textContent = 'Something went wrong';
+        console.error(e);
     }
 });
 </script>
