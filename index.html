@@ -12,7 +12,7 @@
     }
 
     body { 
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdara, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       display: flex;
@@ -187,32 +187,6 @@
       color: #999;
       margin-top: 20px;
     }
-
-    .verification-steps {
-      margin-top: 15px;
-      padding: 10px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      font-size: 12px;
-      color: #666;
-      display: none;
-    }
-
-    .verification-steps.show {
-      display: block;
-    }
-
-    .step {
-      padding: 5px 0;
-    }
-
-    .step-complete {
-      color: #27ae60;
-    }
-
-    .step-checking {
-      color: #667eea;
-    }
   </style>
 </head>
 <body>
@@ -227,28 +201,20 @@
         <input 
           type="email" 
           id="email" 
-          placeholder="Enter your email here" 
+          placeholder="your@email.com" 
           required
           autocomplete="email"
         >
       </div>
 
       <button type="submit" id="submitBtn">
-        <span id="btnText">Continue</span>
+        <span id="btnText">Verify & Continue</span>
         <span class="loader" id="loader" style="display: none;"></span>
       </button>
     </form>
 
     <div class="message error" id="errorMsg"></div>
     <div class="message success" id="successMsg"></div>
-
-    <div class="verification-steps" id="verificationSteps">
-      <div class="step" id="step1">⏳ Checking email format...</div>
-      <div class="step" id="step2">⏳ Verifying domain...</div>
-      <div class="step" id="step3">⏳ Checking MX records...</div>
-      <div class="step" id="step4">⏳ SMTP verification...</div>
-      <div class="step" id="step5">⏳ Deliverability check...</div>
-    </div>
 
     <div class="features">
       <div class="feature">
@@ -270,6 +236,7 @@
 
   <script>
     const OGADS_LINK = 'https://lockverify.org/cl/i/1x51rk';
+    const VALIDKIT_API_KEY = 'vk_prod_866c21581ca3741f989ace2c';
 
     const BLOCKED_DOMAINS = [
       'tempmail.com', 'guerrillamail.com', '10minutemail.com',
@@ -278,14 +245,16 @@
       'fakeinbox.com', 'sharklasers.com', 'guerrillamail.info',
       'grr.la', 'guerrillamail.biz', 'guerrillamail.de', 'spam4.me',
       'tempinbox.com', 'mohmal.com', 'emailondeck.com', 'dispostable.com',
-      'throwawaymail.com', 'trash-mail.com', 'anonymousemail.me'
+      'throwawaymail.com', 'trash-mail.com', 'anonymousemail.me',
+      'sharklasers.com', 'guerrillamail.net', 'guerrillamail.org'
     ];
 
     const ALLOWED_DOMAINS = [
       'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com',
       'icloud.com', 'protonmail.com', 'aol.com', 'zoho.com',
       'mail.com', 'gmx.com', 'yandex.com', 'live.com',
-      'msn.com', 'rediffmail.com', 'inbox.com'
+      'msn.com', 'yahoo.co.in', 'yahoo.co.uk', 'googlemail.com',
+      'rediffmail.com', 'inbox.com', 'me.com', 'mac.com'
     ];
 
     function showMessage(type, text) {
@@ -304,27 +273,6 @@
       }
     }
 
-    function updateStep(stepNum, status, text) {
-      const step = document.getElementById(`step${stepNum}`);
-      if (step) {
-        if (status === 'checking') {
-          step.className = 'step step-checking';
-          step.textContent = `⏳ ${text}`;
-        } else if (status === 'complete') {
-          step.className = 'step step-complete';
-          step.textContent = `✓ ${text}`;
-        }
-      }
-    }
-
-    function showVerificationSteps() {
-      document.getElementById('verificationSteps').classList.add('show');
-    }
-
-    function hideVerificationSteps() {
-      document.getElementById('verificationSteps').classList.remove('show');
-    }
-
     function setLoading(isLoading) {
       const submitBtn = document.getElementById('submitBtn');
       const btnText = document.getElementById('btnText');
@@ -335,11 +283,35 @@
       if (isLoading) {
         btnText.textContent = 'Verifying';
         loader.style.display = 'inline-block';
-        showVerificationSteps();
       } else {
-        btnText.textContent = 'Continue';
+        btnText.textContent = 'Verify & Continue';
         loader.style.display = 'none';
-        hideVerificationSteps();
+      }
+    }
+
+    async function validateWithValidkit(email) {
+      try {
+        const url = `https://api.validkit.io/v1/verify?email=${encodeURIComponent(email)}`;
+        
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'X-Api-Key': VALIDKIT_API_KEY
+          }
+        });
+
+        if (!response.ok) {
+          console.error('Validkit API error:', response.status);
+          return { error: true, status: response.status };
+        }
+
+        const data = await response.json();
+        console.log('Validkit response:', data);
+        return data;
+
+      } catch (error) {
+        console.error('Fetch error:', error);
+        return { error: true, message: error.message };
       }
     }
 
@@ -349,11 +321,8 @@
       const email = document.getElementById('email').value.trim().toLowerCase();
       
       showMessage('', '');
-      hideVerificationSteps();
 
-      // Step 1: Format check
-      updateStep(1, 'checking', 'Checking email format...');
-      
+      // Basic validation
       if (!email) {
         showMessage('error', 'Please enter your email address');
         return;
@@ -365,71 +334,92 @@
         return;
       }
 
-      updateStep(1, 'complete', 'Email format valid');
-
       const domain = email.split('@')[1];
 
-      // Step 2: Domain check
-      updateStep(2, 'checking', 'Verifying domain...');
-
+      // Check blocked domains
       if (BLOCKED_DOMAINS.includes(domain)) {
         showMessage('error', 'Temporary/disposable emails are not allowed. Please use Gmail, Yahoo, or Outlook.');
-        hideVerificationSteps();
         return;
       }
 
+      // Check allowed domains
       if (!ALLOWED_DOMAINS.includes(domain)) {
-        showMessage('error', 'Please use a popular email service like Gmail, Yahoo, Outlook, or Hotmail.');
-        hideVerificationSteps();
+        showMessage('error', 'Please use a popular email service (Gmail, Yahoo, Outlook, Hotmail, etc.)');
         return;
       }
-
-      updateStep(2, 'complete', 'Domain verified');
 
       setLoading(true);
 
-      // Step 3-5: Backend API validation
-      updateStep(3, 'checking', 'Checking MX records...');
+      // Validkit API validation
+      const result = await validateWithValidkit(email);
 
-      try {
-        const response = await fetch('/api/verify-email', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json' 
-          },
-          body: JSON.stringify({ email })
-        });
+      setLoading(false);
 
-        const data = await response.json();
-        setLoading(false);
-
-        if (data.valid === true) {
-          updateStep(3, 'complete', 'MX records valid');
-          updateStep(4, 'complete', 'SMTP verified');
-          updateStep(5, 'complete', 'All checks passed');
-          
-          showMessage('success', '✓ Email verified successfully! Redirecting...');
-          
-          setTimeout(() => {
-            window.location.href = OGADS_LINK;
-          }, 1500);
-        } else {
-          hideVerificationSteps();
-          showMessage('error', data.message || 'Invalid email. Please use a real email address.');
-        }
-
-      } catch (error) {
-        console.error('Verification error:', error);
-        setLoading(false);
-        hideVerificationSteps();
-        showMessage('error', 'Unable to verify email. Please try again.');
+      // Check for API errors
+      if (result.error) {
+        showMessage('error', 'Verification service temporarily unavailable. Please try again in a moment.');
+        return;
       }
+
+      // Check disposable
+      if (result.disposable === true) {
+        showMessage('error', 'Disposable/temporary emails are not allowed.');
+        return;
+      }
+
+      // Check valid
+      if (result.valid === false) {
+        showMessage('error', 'This email address is invalid. Please check and try again.');
+        return;
+      }
+
+      // Check SMTP (email exists)
+      if (result.smtp_check === false) {
+        showMessage('error', 'This email address does not exist. Please use a real email.');
+        return;
+      }
+
+      // If SMTP check is undefined or null, also block
+      if (result.smtp_check !== true) {
+        showMessage('error', 'Unable to verify this email. Please try a different email address.');
+        return;
+      }
+
+      // Check MX records
+      if (result.mx_found === false) {
+        showMessage('error', 'This email domain cannot receive messages.');
+        return;
+      }
+
+      // Check risk score (strict)
+      if (result.risk_score && result.risk_score >= 50) {
+        showMessage('error', 'This email appears to be high-risk. Please use a different email.');
+        return;
+      }
+
+      // Check quality score
+      if (result.quality_score !== undefined && result.quality_score < 50) {
+        showMessage('error', 'This email has a low quality score. Please use a different email.');
+        return;
+      }
+
+      // Check deliverability
+      if (result.deliverable === false) {
+        showMessage('error', 'This email cannot receive messages. Please use a different email.');
+        return;
+      }
+
+      // All checks passed!
+      showMessage('success', '✓ Email verified successfully! Redirecting...');
+      
+      setTimeout(() => {
+        window.location.href = OGADS_LINK;
+      }, 1500);
     }
 
     // Clear messages on input
     document.getElementById('email').addEventListener('input', () => {
       showMessage('', '');
-      hideVerificationSteps();
     });
   </script>
 </body>
