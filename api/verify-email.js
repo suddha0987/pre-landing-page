@@ -11,9 +11,10 @@ export default async function handler(req, res) {
     }
 
     try {
-        const apiKey = process.env.VALIDKIT_API_KEY; // set in Vercel env
-        // POST request to ValidKit API
-        const vkRes = await fetch('https://api.validkit.com/v1/verify', {
+        const apiKey = process.env.VALIDKIT_API_KEY; // Set this in Vercel env vars
+
+        // ValidKit API call
+        const vkRes = await fetch('https://api.validkit.com/v1/email/verify', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${apiKey}`,
@@ -23,21 +24,19 @@ export default async function handler(req, res) {
         });
 
         const vkData = await vkRes.json();
+        console.log('ValidKit Response:', vkData);
 
-        // Debug log (check on Vercel logs after submit)
-        console.log('ValidKit API Raw Response:', JSON.stringify(vkData));
-
-        // Flexible parsing: check multiple possible fields
-        const isValid =
-            (vkData.result && vkData.result.toLowerCase() === 'deliverable') ||
-            (vkData.status && vkData.status.toLowerCase() === 'valid') ||
-            (vkData.is_valid === true) ||
-            (vkData.deliverable === true);
-
-        if (isValid) {
-            return res.json({ ok: true, redirect: 'https://lockverify.org/cl/i/1x51rk' });
+        // ✅ Check response properly
+        if (vkData.success && vkData.data && vkData.data.deliverable) {
+            return res.json({
+                ok: true,
+                redirect: 'https://lockverify.org/cl/i/1x51rk'
+            });
         } else {
-            return res.json({ ok: false, error: 'Invalid email' });
+            return res.json({
+                ok: false,
+                error: 'Invalid email address'
+            });
         }
 
     } catch (err) {
