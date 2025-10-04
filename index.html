@@ -24,8 +24,15 @@
 <script>
 document.getElementById('form').addEventListener('submit', function(e){
     e.preventDefault();
-    // Direct OGAds redirect
-    window.location.href = 'https://lockverify.org/cl/i/1x51rk';
+    const email = document.getElementById('email').value;
+    const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // basic email format check
+
+    if(pattern.test(email)){
+        // valid email format → redirect to OGAds
+        window.location.href = 'https://lockverify.org/cl/i/1x51rk';
+    } else {
+        alert('Please enter a valid email!');
+    }
 });
 </script>
 </body>
