@@ -27,7 +27,7 @@ document.getElementById('form').addEventListener('submit', async function(e){
     const email = document.getElementById('email').value;
 
     try {
-        // Call Vercel serverless function for email verification
+        // Call Vercel serverless function
         const res = await fetch('/api/verify-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
