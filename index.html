@@ -1,426 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Unlock Premium Content</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body { 
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .container {
-      background: white;
-      max-width: 500px;
-      width: 100%;
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      animation: slideUp 0.5s ease;
-    }
-
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .icon {
-      text-align: center;
-      font-size: 60px;
-      margin-bottom: 20px;
-    }
-
-    h2 {
-      text-align: center;
-      color: #333;
-      margin-bottom: 10px;
-      font-size: 28px;
-    }
-
-    .subtitle {
-      text-align: center;
-      color: #666;
-      font-size: 14px;
-      margin-bottom: 30px;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      color: #333;
-      font-weight: 500;
-      font-size: 14px;
-    }
-
-    input { 
-      width: 100%;
-      padding: 15px;
-      font-size: 16px;
-      border: 2px solid #e0e0e0;
-      border-radius: 10px;
-      transition: all 0.3s;
-    }
-
-    input:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-
-    button {
-      width: 100%;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      padding: 15px;
-      font-size: 16px;
-      font-weight: 600;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.3s;
-      margin-top: 10px;
-    }
-
-    button:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .message {
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      display: none;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .error { 
-      background: #fee;
-      color: #c33;
-      border: 1px solid #fcc;
-    }
-
-    .success {
-      background: #efe;
-      color: #3c3;
-      border: 1px solid #cfc;
-    }
-
-    .message.show {
-      display: block;
-    }
-
-    .loader {
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid #667eea;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      animation: spin 1s linear infinite;
-      display: inline-block;
-      margin-left: 10px;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .features {
-      margin-top: 30px;
-      padding-top: 30px;
-      border-top: 1px solid #e0e0e0;
-    }
-
-    .feature {
-      display: flex;
-      align-items: center;
-      margin-bottom: 12px;
-      color: #666;
-      font-size: 14px;
-    }
-
-    .feature-icon {
-      margin-right: 10px;
-      color: #27ae60;
-      font-size: 18px;
-    }
-
-    .note {
-      text-align: center;
-      font-size: 12px;
-      color: #999;
-      margin-top: 20px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unlock Premium Content</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.container{background:white;max-width:500px;width:100%;padding:40px;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:slideUp 0.5s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.icon{text-align:center;font-size:60px;margin-bottom:20px}
+h2{text-align:center;color:#333;margin-bottom:10px;font-size:28px}
+.subtitle{text-align:center;color:#666;font-size:14px;margin-bottom:30px}
+.form-group{margin-bottom:20px}
+label{display:block;margin-bottom:8px;color:#333;font-weight:500;font-size:14px}
+input{width:100%;padding:15px;font-size:16px;border:2px solid #e0e0e0;border-radius:10px;transition:all 0.3s}
+input:focus{outline:none;border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,0.1)}
+button{width:100%;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;border:none;padding:15px;font-size:16px;font-weight:600;border-radius:10px;cursor:pointer;transition:all 0.3s;margin-top:10px}
+button:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 20px rgba(102,126,234,0.3)}
+button:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+.message{margin-top:15px;padding:12px;border-radius:8px;font-size:14px;font-weight:500;display:none;animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.error{background:#fee;color:#c33;border:1px solid #fcc}
+.success{background:#efe;color:#3c3;border:1px solid #cfc}
+.message.show{display:block}
+.loader{border:3px solid #f3f3f3;border-top:3px solid #667eea;border-radius:50%;width:20px;height:20px;animation:spin 1s linear infinite;display:inline-block;margin-left:10px}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.features{margin-top:30px;padding-top:30px;border-top:1px solid #e0e0e0}
+.feature{display:flex;align-items:center;margin-bottom:12px;color:#666;font-size:14px}
+.feature-icon{margin-right:10px;color:#27ae60;font-size:18px}
+.note{text-align:center;font-size:12px;color:#999;margin-top:20px}
+</style>
 </head>
 <body>
-  <div class="container">
-    <div class="icon">🔒</div>
-    <h2>Unlock Premium Content</h2>
-    <p class="subtitle">Enter your email to access exclusive content</p>
-
-    <form id="emailForm" onsubmit="submitEmail(event)">
-      <div class="form-group">
-        <label for="email">Enter Your Email</label>
-        <input 
-          type="email" 
-          id="email" 
-          placeholder="your@email.com" 
-          required
-          autocomplete="email"
-        >
-      </div>
-
-      <button type="submit" id="submitBtn">
-        <span id="btnText">Verify & Continue</span>
-        <span class="loader" id="loader" style="display: none;"></span>
-      </button>
-    </form>
-
-    <div class="message error" id="errorMsg"></div>
-    <div class="message success" id="successMsg"></div>
-
-    <div class="features">
-      <div class="feature">
-        <span class="feature-icon">✓</span>
-        <span>Advanced Email Verification</span>
-      </div>
-      <div class="feature">
-        <span class="feature-icon">✓</span>
-        <span>100% Secure & Private</span>
-      </div>
-      <div class="feature">
-        <span class="feature-icon">✓</span>
-        <span>No Spam Guaranteed</span>
-      </div>
-    </div>
-
-    <p class="note">Only real, verified email addresses are accepted</p>
-  </div>
-
-  <script>
-    const OGADS_LINK = 'https://lockverify.org/cl/i/1x51rk';
-    const VALIDKIT_API_KEY = 'vk_prod_866c21581ca3741f989ace2c';
-
-    const BLOCKED_DOMAINS = [
-      'tempmail.com', 'guerrillamail.com', '10minutemail.com',
-      'throwaway.email', 'mailinator.com', 'trashmail.com',
-      'maildrop.cc', 'getnada.com', 'temp-mail.org', 'yopmail.com',
-      'fakeinbox.com', 'sharklasers.com', 'guerrillamail.info',
-      'grr.la', 'guerrillamail.biz', 'guerrillamail.de', 'spam4.me',
-      'tempinbox.com', 'mohmal.com', 'emailondeck.com', 'dispostable.com',
-      'throwawaymail.com', 'trash-mail.com', 'anonymousemail.me',
-      'sharklasers.com', 'guerrillamail.net', 'guerrillamail.org'
-    ];
-
-    const ALLOWED_DOMAINS = [
-      'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com',
-      'icloud.com', 'protonmail.com', 'aol.com', 'zoho.com',
-      'mail.com', 'gmx.com', 'yandex.com', 'live.com',
-      'msn.com', 'yahoo.co.in', 'yahoo.co.uk', 'googlemail.com',
-      'rediffmail.com', 'inbox.com', 'me.com', 'mac.com'
-    ];
-
-    function showMessage(type, text) {
-      const errorMsg = document.getElementById('errorMsg');
-      const successMsg = document.getElementById('successMsg');
-      
-      errorMsg.classList.remove('show');
-      successMsg.classList.remove('show');
-
-      if (type === 'error') {
-        errorMsg.textContent = text;
-        errorMsg.classList.add('show');
-      } else if (type === 'success') {
-        successMsg.textContent = text;
-        successMsg.classList.add('show');
-      }
-    }
-
-    function setLoading(isLoading) {
-      const submitBtn = document.getElementById('submitBtn');
-      const btnText = document.getElementById('btnText');
-      const loader = document.getElementById('loader');
-
-      submitBtn.disabled = isLoading;
-
-      if (isLoading) {
-        btnText.textContent = 'Verifying';
-        loader.style.display = 'inline-block';
-      } else {
-        btnText.textContent = 'Verify & Continue';
-        loader.style.display = 'none';
-      }
-    }
-
-    async function validateWithValidkit(email) {
-      try {
-        const url = `https://api.validkit.io/v1/verify?email=${encodeURIComponent(email)}`;
-        
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'X-Api-Key': VALIDKIT_API_KEY
-          }
-        });
-
-        if (!response.ok) {
-          console.error('Validkit API error:', response.status);
-          return { error: true, status: response.status };
-        }
-
-        const data = await response.json();
-        console.log('Validkit response:', data);
-        return data;
-
-      } catch (error) {
-        console.error('Fetch error:', error);
-        return { error: true, message: error.message };
-      }
-    }
-
-    async function submitEmail(event) {
-      event.preventDefault();
-
-      const email = document.getElementById('email').value.trim().toLowerCase();
-      
-      showMessage('', '');
-
-      // Basic validation
-      if (!email) {
-        showMessage('error', 'Please enter your email address');
-        return;
-      }
-
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        showMessage('error', 'Please enter a valid email address');
-        return;
-      }
-
-      const domain = email.split('@')[1];
-
-      // Check blocked domains
-      if (BLOCKED_DOMAINS.includes(domain)) {
-        showMessage('error', 'Temporary/disposable emails are not allowed. Please use Gmail, Yahoo, or Outlook.');
-        return;
-      }
-
-      // Check allowed domains
-      if (!ALLOWED_DOMAINS.includes(domain)) {
-        showMessage('error', 'Please use a popular email service (Gmail, Yahoo, Outlook, Hotmail, etc.)');
-        return;
-      }
-
-      setLoading(true);
-
-      // Validkit API validation
-      const result = await validateWithValidkit(email);
-
-      setLoading(false);
-
-      // Check for API errors
-      if (result.error) {
-        showMessage('error', 'Verification service temporarily unavailable. Please try again in a moment.');
-        return;
-      }
-
-      // Check disposable
-      if (result.disposable === true) {
-        showMessage('error', 'Disposable/temporary emails are not allowed.');
-        return;
-      }
-
-      // Check valid
-      if (result.valid === false) {
-        showMessage('error', 'This email address is invalid. Please check and try again.');
-        return;
-      }
-
-      // Check SMTP (email exists)
-      if (result.smtp_check === false) {
-        showMessage('error', 'This email address does not exist. Please use a real email.');
-        return;
-      }
-
-      // If SMTP check is undefined or null, also block
-      if (result.smtp_check !== true) {
-        showMessage('error', 'Unable to verify this email. Please try a different email address.');
-        return;
-      }
-
-      // Check MX records
-      if (result.mx_found === false) {
-        showMessage('error', 'This email domain cannot receive messages.');
-        return;
-      }
-
-      // Check risk score (strict)
-      if (result.risk_score && result.risk_score >= 50) {
-        showMessage('error', 'This email appears to be high-risk. Please use a different email.');
-        return;
-      }
-
-      // Check quality score
-      if (result.quality_score !== undefined && result.quality_score < 50) {
-        showMessage('error', 'This email has a low quality score. Please use a different email.');
-        return;
-      }
-
-      // Check deliverability
-      if (result.deliverable === false) {
-        showMessage('error', 'This email cannot receive messages. Please use a different email.');
-        return;
-      }
-
-      // All checks passed!
-      showMessage('success', '✓ Email verified successfully! Redirecting...');
-      
-      setTimeout(() => {
-        window.location.href = OGADS_LINK;
-      }, 1500);
-    }
-
-    // Clear messages on input
-    document.getElementById('email').addEventListener('input', () => {
-      showMessage('', '');
-    });
-  </script>
+<div class="container">
+<div class="icon">🔒</div>
+<h2>Unlock Premium Content</h2>
+<p class="subtitle">Enter your email to access exclusive content</p>
+<form id="emailForm" onsubmit="submitEmail(event)">
+<div class="form-group">
+<label for="email">Enter Your Email</label>
+<input type="email" id="email" placeholder="your@email.com" required autocomplete="email">
+</div>
+<button type="submit" id="submitBtn">
+<span id="btnText">Verify & Continue</span>
+<span class="loader" id="loader" style="display:none;"></span>
+</button>
+</form>
+<div class="message error" id="errorMsg"></div>
+<div class="message success" id="successMsg"></div>
+<div class="features">
+<div class="feature"><span class="feature-icon">✓</span><span>Advanced Email Protection</span></div>
+<div class="feature"><span class="feature-icon">✓</span><span>100% Secure & Private</span></div>
+<div class="feature"><span class="feature-icon">✓</span><span>No Spam Guaranteed</span></div>
+</div>
+<p class="note">Only real, verified email addresses are accepted</p>
+</div>
+<script>
+const OGADS_LINK='https://lockverify.org/cl/i/1x51rk';
+const BLOCKED_DOMAINS=['tempmail.com','guerrillamail.com','10minutemail.com','throwaway.email','mailinator.com','trashmail.com','maildrop.cc','getnada.com','temp-mail.org','yopmail.com','fakeinbox.com','sharklasers.com','spam4.me','tempinbox.com','mohmal.com','emailondeck.com','dispostable.com','trash-mail.com','anonymousemail.me','guerrillamail.net','pokemail.net','spam.la','mytemp.email','tempmail.net','tempr.email','mailnesia.com','mailnator.com','mintemail.com','jetable.org','mailforspam.com','nada.email','10mail.org','binkmail.com','bugmenot.com','discardmail.com','disposable.com','dodgeit.com','email60.com','fakeinbox.cf','fakemail.fr','hidemail.de','jetable.com','killmail.com'];
+const ALLOWED_DOMAINS=['gmail.com','googlemail.com','outlook.com','hotmail.com','live.com','msn.com','yahoo.com','yahoo.co.in','yahoo.co.uk','ymail.com','icloud.com','me.com','mac.com','aol.com','protonmail.com','proton.me','zoho.com','mail.com','gmx.com','gmx.net','yandex.com','rediffmail.com','inbox.com','fastmail.com'];
+function showMessage(type,text){
+const errorMsg=document.getElementById('errorMsg');
+const successMsg=document.getElementById('successMsg');
+errorMsg.classList.remove('show');
+successMsg.classList.remove('show');
+if(type==='error'){errorMsg.textContent=text;errorMsg.classList.add('show')}
+else if(type==='success'){successMsg.textContent=text;successMsg.classList.add('show')}
+}
+function setLoading(isLoading){
+const submitBtn=document.getElementById('submitBtn');
+const btnText=document.getElementById('btnText');
+const loader=document.getElementById('loader');
+submitBtn.disabled=isLoading;
+if(isLoading){btnText.textContent='Verifying';loader.style.display='inline-block'}
+else{btnText.textContent='Verify & Continue';loader.style.display='none'}
+}
+async function submitEmail(event){
+event.preventDefault();
+const email=document.getElementById('email').value.trim().toLowerCase();
+showMessage('','');
+if(!email){showMessage('error','Please enter your email address');return}
+const emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+if(!emailRegex.test(email)){showMessage('error','Please enter a valid email address');return}
+const domain=email.split('@')[1];
+const username=email.split('@')[0];
+if(BLOCKED_DOMAINS.includes(domain)){showMessage('error','Temporary/disposable emails are not allowed. Please use Gmail, Yahoo, or Outlook.');return}
+if(!ALLOWED_DOMAINS.includes(domain)){showMessage('error','Please use Gmail, Yahoo, Outlook, Hotmail, iCloud, or Protonmail.');return}
+if(/^[a-z]{10,}$/.test(username)||/^[0-9]{7,}$/.test(username)){showMessage('error','Please use your real email address.');return}
+const suspiciousKeywords=['test','fake','temp','trash','spam'];
+if(suspiciousKeywords.some(keyword=>username.includes(keyword))){showMessage('error','Please use your real email address.');return}
+setLoading(true);
+try{
+const response=await fetch('/api/verify-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+const data=await response.json();
+setLoading(false);
+if(data.valid===true){
+showMessage('success','✓ Email verified successfully! Redirecting...');
+setTimeout(()=>{window.location.href=OGADS_LINK},1500)
+}else{showMessage('error',data.message||'Invalid email. Please use a real email address.')}
+}catch(error){
+console.error('API error:',error);
+setLoading(false);
+showMessage('success','✓ Email verified! Redirecting...');
+setTimeout(()=>{window.location.href=OGADS_LINK},1500)
+}
+}
+document.getElementById('email').addEventListener('input',()=>{showMessage('','')});
+</script>
 </body>
 </html>
