@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // Preflight request
+  // Handle preflight
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
@@ -28,114 +28,72 @@ export default async function handler(req, res) {
     });
   }
 
-  try {
-    // Get API key from environment
-    const apiKey = process.env.VALIDKIT_KEY;
-
-    if (!apiKey) {
-      console.error('VALIDKIT_KEY not found in environment');
-      return res.status(500).json({
-        valid: false,
-        message: 'Server configuration error'
-      });
-    }
-
-    // Call Validkit API
-    const validkitUrl = `https://api.validkit.io/v1/verify?email=${encodeURIComponent(email)}`;
-    
-    const response = await fetch(validkitUrl, {
-      method: 'GET',
-      headers: {
-        'X-Api-Key': apiKey
-      }
-    });
-
-    if (!response.ok) {
-      console.error('Validkit API error:', response.status);
-      return res.status(200).json({
-        valid: false,
-        message: 'Email verification service error'
-      });
-    }
-
-    const data = await response.json();
-    console.log('Validkit response:', JSON.stringify(data));
-
-    // Check 1: Disposable email
-    if (data.disposable === true) {
-      return res.status(200).json({
-        valid: false,
-        message: 'Disposable/temporary emails are not allowed'
-      });
-    }
-
-    // Check 2: Email validity
-    if (data.valid === false) {
-      return res.status(200).json({
-        valid: false,
-        message: 'This email address is invalid'
-      });
-    }
-
-    // Check 3: SMTP verification - MANDATORY
-    if (data.smtp_check === false) {
-      return res.status(200).json({
-        valid: false,
-        message: 'This email address does not exist'
-      });
-    }
-
-    // If smtp_check is undefined, also reject
-    if (data.smtp_check !== true) {
-      return res.status(200).json({
-        valid: false,
-        message: 'Unable to verify this email address'
-      });
-    }
-
-    // Check 4: MX records
-    if (data.mx_found === false) {
-      return res.status(200).json({
-        valid: false,
-        message: 'This domain cannot receive emails'
-      });
-    }
-
-    // Check 5: Risk score - STRICT (50+)
-    if (data.risk_score && data.risk_score >= 50) {
-      return res.status(200).json({
-        valid: false,
-        message: 'This email appears to be high-risk or fake'
-      });
-    }
-
-    // Check 6: Quality score
-    if (data.quality_score && data.quality_score < 50) {
-      return res.status(200).json({
-        valid: false,
-        message: 'This email has low quality score'
-      });
-    }
-
-    // Check 7: Deliverability
-    if (data.deliverable === false) {
-      return res.status(200).json({
-        valid: false,
-        message: 'This email cannot receive messages'
-      });
-    }
-
-    // All checks passed
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
     return res.status(200).json({
-      valid: true,
-      message: 'Email verified successfully'
-    });
-
-  } catch (error) {
-    console.error('Verification error:', error);
-    return res.status(500).json({
       valid: false,
-      message: 'Failed to verify email. Please try again.'
+      message: 'Invalid email format'
     });
   }
+
+  const domain = email.split('@')[1].toLowerCase();
+  const username = email.split('@')[0].toLowerCase();
+
+  // Blocked disposable domains
+  const blockedDomains = [
+    'tempmail.com', 'guerrillamail.com', '10minutemail.com', 'throwaway.email',
+    'mailinator.com', 'trashmail.com', 'maildrop.cc', 'getnada.com',
+    'temp-mail.org', 'yopmail.com', 'fakeinbox.com', 'sharklasers.com',
+    'guerrillamail.info', 'grr.la', 'spam4.me', 'tempinbox.com',
+    'mohmal.com', 'emailondeck.com', 'dispostable.com', 'trash-mail.com'
+  ];
+
+  // Allowed trusted domains
+  const allowedDomains = [
+    'gmail.com', 'googlemail.com', 'outlook.com', 'hotmail.com', 'live.com',
+    'msn.com', 'yahoo.com', 'yahoo.co.in', 'yahoo.co.uk', 'ymail.com',
+    'icloud.com', 'me.com', 'mac.com', 'aol.com', 'protonmail.com',
+    'proton.me', 'zoho.com', 'mail.com', 'gmx.com', 'yandex.com',
+    'rediffmail.com', 'inbox.com', 'fastmail.com'
+  ];
+
+  // Check blocked
+  if (blockedDomains.includes(domain)) {
+    return res.status(200).json({
+      valid: false,
+      message: 'Disposable emails are not allowed'
+    });
+  }
+
+  // Check allowed
+  if (!allowedDomains.includes(domain)) {
+    return res.status(200).json({
+      valid: false,
+      message: 'Please use a trusted email provider'
+    });
+  }
+
+  // Check suspicious patterns
+  if (/^[a-z]{10,}$/.test(username) || /^[0-9]{7,}$/.test(username)) {
+    return res.status(200).json({
+      valid: false,
+      message: 'Suspicious email pattern detected'
+    });
+  }
+
+  // Check suspicious keywords
+  const suspiciousKeywords = ['test', 'fake', 'temp', 'trash', 'spam', 'junk'];
+  if (suspiciousKeywords.some(keyword => username.includes(keyword))) {
+    return res.status(200).json({
+      valid: false,
+      message: 'Please use a real email address'
+    });
+  }
+
+  // All checks passed
+  return res.status(200).json({
+    valid: true,
+    message: 'Email verified successfully'
+  });
 }
