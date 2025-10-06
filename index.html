@@ -1,24 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Email Verification Landing Page</title>
-  <style>
-    body {font-family: Arial; background:#f4f4f4; display:flex; justify-content:center; align-items:center; height:100vh;}
-    .box {background:white; padding:30px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.2);}
-    input {padding:10px; width:250px; border-radius:5px; border:1px solid #ccc;}
-    button {padding:10px 20px; background:#007BFF; color:white; border:none; border-radius:5px; cursor:pointer;}
-  </style>
-</head>
-<body>
-  <div class="box">
-    <h2>Get Access Now!</h2>
-    <input type="email" id="email" placeholder="Enter your email" required>
-    <button onclick="verifyEmail()">Submit</button>
-    <p id="msg"></p>
-  </div>
+<!-- Temporary Button for SMTP Test -->
+<button id="vkTestBtn" style="padding:10px 20px; font-size:16px; margin:20px;">Test ValidKit SMTP</button>
 
-  <script src="script.js"></script>
-</body>
-</html>
+<script>
+document.getElementById('vkTestBtn').addEventListener('click', async () => {
+  const testEmail = prompt("Enter test email:", "boldflikz@gmail.com");
+  if(!testEmail) return;
+
+  const apiKey = "vk_prod_866c21581ca3741f989ace2c"; // Temporary for testing only
+
+  try {
+    const res = await fetch(`https://api.validkit.io/v1/verify/email?email=${encodeURIComponent(testEmail)}`, {
+      headers: { Authorization: `Bearer ${apiKey}` }
+    });
+
+    if(res.status !== 200) {
+      alert("Error: HTTP status " + res.status);
+      return;
+    }
+
+    const data = await res.json();
+    console.log("Full response:", data);
+
+    if(data?.result) {
+      alert(
+        `✅ SMTP: ${data.result.smtp}\n` +
+        `✅ Valid: ${data.result.valid}\n` +
+        `✅ Format: ${data.result.format}`
+      );
+    } else {
+      alert("No result returned. Check console.");
+    }
+
+  } catch(err) {
+    console.error("Fetch error:", err);
+    alert("Error occurred. Check console.");
+  }
+});
+</script>
