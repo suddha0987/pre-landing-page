@@ -3,32 +3,20 @@ async function verifyEmail() {
   const msg = document.getElementById("msg");
   msg.textContent = "Verifying email...";
 
-  // 1️⃣ ValidKit SMTP verification
-  const apiKey = "vk_prod_xxxxxxxxxxxxxxx"; // 👈 अपना ValidKit API key डालो
-  const response = await fetch(`https://api.validkit.com/v1/verify/email?email=${email}`, {
+  // ValidKit SMTP verification
+  const apiKey = "vk_prod_866c21581ca3741f989ace2c"; // your valid key
+  const response = await fetch(`https://api.validkit.io/v1/verify/email?email=${email}`, {
     headers: { Authorization: `Bearer ${apiKey}` }
   });
   const data = await response.json();
+  console.log("ValidKit response:", data);
 
-  if (data?.result?.valid) {
+  if (data?.result?.valid && data?.result?.smtp) {
     msg.textContent = "✅ Email verified successfully!";
 
-    // 2️⃣ Save email to GitHub repo (Optional)
-    fetch("https://api.github.com/repos/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME/contents/emails.json", {
-      method: "PUT",
-      headers: {
-        "Authorization": "token YOUR_GITHUB_PERSONAL_ACCESS_TOKEN",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        message: "Add email",
-        content: btoa(JSON.stringify({ email, date: new Date().toISOString() }))
-      })
-    });
-
-    // 3️⃣ Redirect to OGAds link
+    // Redirect to OGAds
     setTimeout(() => {
-      window.location.href = "https://www.ogads.com/your-offer-link"; // 👈 अपना OGAds link डालो
+      window.location.href = "https://www.ogads.com/your-offer-link";
     }, 1500);
 
   } else {
