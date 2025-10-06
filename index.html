@@ -1,87 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page Test</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
-        input, button { padding: 10px; margin: 10px 0; width: 80%; max-width: 400px; }
-        button { cursor: pointer; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMTP Test Page</title>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 20px; }
+    button { padding: 15px 30px; font-size: 16px; margin: 20px; cursor: pointer; }
+  </style>
 </head>
 <body>
-    <h1>Welcome to My Landing Page</h1>
+  <h1>Test Your ValidKit SMTP Setup</h1>
+  <button id="testSMTP">Test SMTP</button>
 
-    <!-- Email Form -->
-    <form id="emailForm">
-        <input type="email" id="userEmail" placeholder="Enter your email" required />
-        <button type="submit">Submit</button>
-    </form>
+  <script>
+    document.getElementById('testSMTP').addEventListener('click', async () => {
+      const testEmail = prompt("Enter test email:", "boldflikz@gmail.com");
+      if(!testEmail) return;
 
-    <!-- Temporary SMTP Test Button -->
-    <button id="vkTestBtn" style="padding:10px 20px; font-size:16px; margin:20px;">Test ValidKit SMTP</button>
+      const apiKey = "vk_prod_866c21581ca3741f989ace2c"; // Your ValidKit key
+      try {
+        const res = await fetch(`https://api.validkit.io/v1/verify/email?email=${encodeURIComponent(testEmail)}`, {
+          headers: { Authorization: `Bearer ${apiKey}` }
+        });
+        const data = await res.json();
+        console.log("ValidKit Response:", data);
 
-    <script>
-    // ---------- Temporary SMTP Test ----------
-    document.getElementById('vkTestBtn').addEventListener('click', async () => {
-        const testEmail = prompt("Enter test email:", "boldflikz@gmail.com");
-        if(!testEmail) return;
-
-        const apiKey = "vk_prod_866c21581ca3741f989ace2c"; // Temporary for testing
-
-        try {
-            const res = await fetch(`https://api.validkit.io/v1/verify/email?email=${encodeURIComponent(testEmail)}`, {
-                headers: { Authorization: `Bearer ${apiKey}` }
-            });
-
-            const data = await res.json();
-
-            if(data?.result) {
-                alert(
-                    `✅ SMTP: ${data.result.smtp}\n` +
-                    `✅ Valid: ${data.result.valid}\n` +
-                    `✅ Format: ${data.result.format}`
-                );
-            } else {
-                alert("No result returned. Check console.");
-            }
-            console.log("ValidKit response:", data);
-
-        } catch(err) {
-            alert("Error occurred. Check console.");
-            console.error(err);
+        if(data?.result?.smtp && data?.result?.valid && data?.result?.format) {
+          alert(`✅ SMTP: ${data.result.smtp}\n✅ Valid: ${data.result.valid}\n✅ Format: ${data.result.format}\n\nSetup is working!`);
+        } else {
+          alert(`❌ SMTP or validation failed!\nCheck console for details.`);
         }
+      } catch(err) {
+        alert("Error occurred. Check console.");
+        console.error(err);
+      }
     });
-
-    // ---------- Email Form Submit ----------
-    document.getElementById('emailForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('userEmail').value;
-        if(!email) return alert("Enter email first!");
-
-        // ---------- Google Sheets POST Placeholder ----------
-        const googleSheetURL = "YOUR_GOOGLE_SCRIPT_WEBAPP_URL"; // <-- Replace with your deployed Google Apps Script URL
-
-        try {
-            await fetch(googleSheetURL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    email: email,
-                    timestamp: new Date().toISOString(),
-                    userAgent: navigator.userAgent
-                })
-            });
-            // ---------- OGAds Redirect Placeholder ----------
-            const ogadsLink = "YOUR_OGADS_LINK"; // <-- Replace with your OGAds link
-            window.location.href = ogadsLink;
-        } catch(err) {
-            alert("Error saving email or redirecting. Check console.");
-            console.error(err);
-        }
-    });
-    </script>
-
+  </script>
 </body>
 </html>
